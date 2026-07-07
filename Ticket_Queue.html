@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body {
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  margin: 0;
+  padding: 24px;
+}
+
+.safety-banner {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header .tech-badge {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.tech-badge i { margin-right: 6px; color: var(--color-primary); }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-card .stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--color-text);
+}
+
+.stat-card .stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+
+.filter-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.filter-btn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  margin-bottom: 16px;
+}
+
+.search-bar i { color: var(--color-text-muted); font-size: 14px; }
+
+.search-bar input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  width: 100%;
+}
+
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ticket-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.ticket-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.ticket-card.type-install { border-left: 4px solid #1d4ed8; }
+.ticket-card.type-repair { border-left: 4px solid #7c3aed; }
+
+.ticket-main {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.ticket-info { display: flex; flex-direction: column; gap: 6px; }
+
+.ticket-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.ticket-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.ticket-meta span i { margin-right: 4px; }
+
+.category-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.category-install { background: #1d4ed8; color: #ffffff; }
+.category-repair { background: #7c3aed; color: #ffffff; }
+
+.window-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.expand-icon {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+  margin-left: 8px;
+}
+
+.ticket-card.expanded .expand-icon {
+  transform: rotate(180deg);
+}
+
+.ticket-details {
+  display: none;
+  padding: 0 20px 16px 20px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.ticket-card.expanded .ticket-details {
+  display: block;
+  padding-top: 16px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.detail-item {
+  font-size: 12px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.detail-value {
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.notes-section {
+  margin-top: 12px;
+}
+
+.notes-section label {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 10px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.notes-box {
+  width: 100%;
+  min-height: 60px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-surface, #fff);
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.notes-box:focus {
+  border-color: var(--color-primary);
+}
+
+.notes-box::placeholder {
+  color: var(--color-text-muted);
+}
+
+.claim-btn {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.claim-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--color-text-muted);
+}
+
+.empty-state i { font-size: 32px; margin-bottom: 12px; display: block; }
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--color-success);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="safety-banner">"No job is so important and no service so urgent. That we can't perform our work in a safe and environmentally friendly manner."</div>
+
+<div class="header">
+  <h1><i class="fa-solid fa-clipboard-list" style="color: var(--color-primary); margin-right: 8px;"></i>Ticket Queue</h1>
+  <div class="tech-badge"><i class="fa-solid fa-user-gear"></i>Technician View</div>
+</div>
+
+<div class="stats-row" id="stats"></div>
+
+<div class="search-bar">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="text" id="search" placeholder="Search by BAN, title, or address..." oninput="renderTickets()">
+</div>
+
+<div class="filters" id="filters"></div>
+
+<div class="ticket-list" id="ticketList"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const windowOrder = {
+  "8am-10am": 1,
+  "8am-12pm": 2,
+  "10am-12pm": 3,
+  "12pm-2pm": 4,
+  "12pm-4pm": 5,
+  "2pm-4pm": 6,
+  "4pm-8pm": 7
+};
+
+const windowDisplay = {
+  "8am-10am": "8-10",
+  "8am-12pm": "8-12",
+  "10am-12pm": "10-12",
+  "12pm-2pm": "12-2",
+  "12pm-4pm": "12-4",
+  "2pm-4pm": "2-4",
+  "4pm-8pm": "4-8"
+};
+
+const tickets = [
+  { ban: "343326008", title: "EOX Install", category: "Install", location: "182 Nashville Pike, Gallatin, TN 37066", window: "8am-10am", customer: "Jennifer Rodriguez", phone: "615-000-0000", transport: "G-pon", calledIn: null },
+  { ban: "343577686", title: "ONT No Service", category: "Repair", location: "157 Cherokee Dr, Gallatin, TN 37066", window: "8am-12pm", customer: "Michael Martin", phone: "615-000-0000", transport: "Xgs-pon", calledIn: "7/2/2026 3:45 PM" },
+  { ban: "343500160", title: "POX Install", category: "Install", location: "1460 Vietnam Veterans Blvd, Gallatin, TN 37066", window: "10am-12pm", customer: "Jessica Anderson", phone: "615-000-0000", transport: "FTTP", calledIn: null },
+  { ban: "343682610", title: "Uverse Repair", category: "Repair", location: "1087 Triple Crown Dr, Gallatin, TN 37066", window: "12pm-4pm", customer: "Robert Thomas", phone: "615-000-0000", transport: "FTTP-Bp", calledIn: "7/3/2026 8:12 AM" },
+  { ban: "343587745", title: "EOX Install", category: "Install", location: "1053 New Shackle Island Rd, Gallatin, TN 37066", window: "12pm-2pm", customer: "Robert Moore", phone: "615-000-0000", transport: "G-pon", calledIn: null },
+  { ban: "343836660", title: "Buried Drop Request", category: "Repair", location: "1277 Hartsville Pike, Gallatin, TN 37066", window: "4pm-8pm", customer: "Jennifer Thomas", phone: "615-000-0000", transport: "Xgs-pon", calledIn: "7/2/2026 11:30 AM" },
+  { ban: "343591058", title: "Special Request", category: "Repair", location: "2960 Hartsville Pike, Gallatin, TN 37066", window: "12pm-4pm", customer: "Michael Miller", phone: "615-000-0000", transport: "FTTP", calledIn: "7/3/2026 6:50 AM" },
+  { ban: "343726251", title: "POX Install", category: "Install", location: "2163 W Main St, Gallatin, TN 37066", window: "2pm-4pm", customer: "Ashley Rodriguez", phone: "615-000-0000", transport: "G-pon", calledIn: null },
+];
+
+let activeFilter = "All";
+let claimed = new Set();
+let expanded = new Set();
+let notes = {};
+
+const categories = ["All", "Install", "Repair"];
+
+function getSortedTickets(ticketList) {
+  return [...ticketList].sort((a, b) => windowOrder[a.window] - windowOrder[b.window]);
+}
+
+function renderStats() {
+  const pending = tickets.filter(t => !claimed.has(t.ban)).length;
+  const installs = tickets.filter(t => t.category === "Install" && !claimed.has(t.ban)).length;
+  const repairs = tickets.filter(t => t.category === "Repair" && !claimed.has(t.ban)).length;
+  document.getElementById("stats").innerHTML = `
+    <div class="stat-card"><div class="stat-value">${pending}</div><div class="stat-label">Pending Tickets</div></div>
+    <div class="stat-card"><div class="stat-value" style="color: #1d4ed8">${installs}</div><div class="stat-label">Installs</div></div>
+    <div class="stat-card"><div class="stat-value" style="color: #7c3aed">${repairs}</div><div class="stat-label">Repairs</div></div>
+  `;
+}
+
+function renderFilters() {
+  document.getElementById("filters").innerHTML = categories.map(c =>
+    `<button class="filter-btn ${c === activeFilter ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  renderFilters();
+  renderTickets();
+}
+
+function toggleExpand(ban, e) {
+  if (e.target.closest('.claim-btn') || e.target.closest('.notes-box')) return;
+  if (expanded.has(ban)) {
+    expanded.delete(ban);
+  } else {
+    expanded.add(ban);
+  }
+  renderTickets();
+}
+
+function saveNote(ban, value) {
+  notes[ban] = value;
+}
+
+function renderTickets() {
+  const query = document.getElementById("search").value.toLowerCase();
+  let filtered = tickets.filter(t => {
+    const matchesFilter = activeFilter === "All" || t.category === activeFilter;
+    const matchesSearch = !query || t.title.toLowerCase().includes(query) || t.location.toLowerCase().includes(query) || t.ban.includes(query) || t.customer.toLowerCase().includes(query);
+    return matchesFilter && matchesSearch && !claimed.has(t.ban);
+  });
+
+  filtered = getSortedTickets(filtered);
+
+  if (filtered.length === 0) {
+    document.getElementById("ticketList").innerHTML = `
+      <div class="empty-state">
+        <i class="fa-solid fa-circle-check"></i>
+        <p>No pending tickets match your filters.</p>
+      </div>`;
+    return;
+  }
+
+  document.getElementById("ticketList").innerHTML = filtered.map(t => `
+    <div class="ticket-card type-${t.category.toLowerCase()} ${expanded.has(t.ban) ? 'expanded' : ''}" id="card-${t.ban}" onclick="toggleExpand('${t.ban}', event)">
+      <div class="ticket-main">
+        <div class="ticket-info">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span class="category-badge category-${t.category.toLowerCase()}">${t.category}</span>
+            <span class="ticket-title">${t.title}</span>
+            <i class="fa-solid fa-chevron-down expand-icon"></i>
+          </div>
+          <div class="ticket-meta">
+            <span><i class="fa-solid fa-barcode"></i>BAN: ${t.ban}</span>
+            <span><i class="fa-solid fa-location-dot"></i>${t.location}</span>
+            <span class="window-badge"><i class="fa-regular fa-clock"></i>${windowDisplay[t.window]}</span>
+          </div>
+        </div>
+        <button class="claim-btn" onclick="claimTicket('${t.ban}', '${t.title}')">Request Job</button>
+      </div>
+      <div class="ticket-details">
+        <div class="details-grid">
+          <div class="detail-item">
+            <div class="detail-label">Customer Name</div>
+            <div class="detail-value">${t.customer}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Phone Number</div>
+            <div class="detail-value">${t.phone}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Transport Type</div>
+            <div class="detail-value">${t.transport}</div>
+          </div>
+          ${t.calledIn ? `<div class="detail-item">
+            <div class="detail-label">Called In</div>
+            <div class="detail-value">${t.calledIn}</div>
+          </div>` : ''}
+        </div>
+        <div class="notes-section">
+          <label>Technician Notes</label>
+          <textarea class="notes-box" placeholder="Add notes for other technicians..." onclick="event.stopPropagation()" oninput="saveNote('${t.ban}', this.value)">${notes[t.ban] || ''}</textarea>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function claimTicket(ban, title) {
+  claimed.add(ban);
+  const card = document.getElementById("card-" + ban);
+  if (card) {
+    card.style.opacity = "0";
+    card.style.transform = "translateX(20px)";
+    card.style.transition = "all 0.3s ease";
+    setTimeout(() => { renderTickets(); renderStats(); }, 300);
+  }
+  showToast(`✓ Job requested — BAN ${ban}: "${title}"`);
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+renderStats();
+renderFilters();
+renderTickets();
+</script>
+</body>
+</html>
